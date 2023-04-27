@@ -6,28 +6,29 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.beckytech.englishgrade8thtextbook.activity.AboutActivity;
-import com.beckytech.englishgrade8thtextbook.activity.BookDetailActivity;
-import com.beckytech.englishgrade8thtextbook.adapter.Adapter;
-import com.beckytech.englishgrade8thtextbook.contents.ContentEndPage;
-import com.beckytech.englishgrade8thtextbook.contents.ContentStartPage;
-import com.beckytech.englishgrade8thtextbook.contents.SubTitleContents;
-import com.beckytech.englishgrade8thtextbook.contents.TitleContents;
-import com.beckytech.englishgrade8thtextbook.model.Model;
-import com.github.barteksc.pdfviewer.BuildConfig;
+import com.beckytech.englishgrade8thtextbook.activity.*;
+import com.beckytech.englishgrade8thtextbook.adapter.*;
+import com.beckytech.englishgrade8thtextbook.contents.*;
+import com.beckytech.englishgrade8thtextbook.model.*;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
@@ -40,14 +41,20 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements Adapter.onBookClicked{
-
+public class MainActivity extends AppCompatActivity implements MoreAppsAdapter.MoreAppsClicked, Adapter.onBookClicked {
     private InterstitialAd mInterstitialAd;
-    private final List<Model> list = new ArrayList<>();
-    private final ContentStartPage startPage = new ContentStartPage();
+    private DrawerLayout drawerLayout;
+    private List<Model> modelList;
     private final TitleContents titleContents = new TitleContents();
-    private final ContentEndPage endPage = new ContentEndPage();
     private final SubTitleContents subTitleContents = new SubTitleContents();
+    private final ContentStartPage startPage = new ContentStartPage();
+    private final ContentEndPage endPage = new ContentEndPage();
+
+    private final MoreAppImages images = new MoreAppImages();
+    private final MoreAppUrl url = new MoreAppUrl();
+    private final MoreAppsName appsName = new MoreAppsName();
+    private List<MoreAppsModel> moreAppsModelList;
+    private AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,17 +68,24 @@ public class MainActivity extends AppCompatActivity implements Adapter.onBookCli
 
         setAds();
 
-        AdView mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+        //get the reference to your FrameLayout
+        FrameLayout adContainerView = findViewById(R.id.adView_container);
+        //Create an AdView and put it into your FrameLayout
+        adView = new AdView(this);
+        adContainerView.addView(adView);
+        adView.setAdUnitId(getString(R.string.banner_ad_unit_id));
+//        adView.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
 
+        //start requesting banner ads
+        loadBanner();
+
+        drawerLayout = findViewById(R.id.drawer_layout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name);
-        drawerToggle.syncState();
-        drawerLayout.addDrawerListener(drawerToggle);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                R.string.app_name, R.string.app_name);
+        toggle.syncState();
+        drawerLayout.addDrawerListener(toggle);
 
         NavigationView navigationView = findViewById(R.id.navigationView);
         navigationView.setNavigationItemSelectedListener(item -> {
@@ -79,23 +93,40 @@ public class MainActivity extends AppCompatActivity implements Adapter.onBookCli
             return true;
         });
 
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = findViewById(R.id.recyclerView_main_item);
         getData();
-        Adapter adapter = new Adapter(list, this);
+        Adapter adapter = new Adapter(modelList, this);
         recyclerView.setAdapter(adapter);
+
+        RecyclerView moreAppsRecyclerView = findViewById(R.id.moreAppsRecycler);
+        getMoreApps();
+        MoreAppsAdapter moreAppsAdapter = new MoreAppsAdapter(moreAppsModelList, this);
+        moreAppsRecyclerView.setAdapter(moreAppsAdapter);
+    }
+
+    private void getMoreApps() {
+        moreAppsModelList = new ArrayList<>();
+        for (int i = 0; i < appsName.appNames.length; i++) {
+            moreAppsModelList.add(new MoreAppsModel(appsName.appNames[i], url.url[i], images.images[i]));
+        }
     }
 
     private void getData() {
-        for (int i = 0; i < titleContents.title.length; i++) {
-            list.add(new Model(titleContents.title[i].substring(0, 1).toUpperCase() + "" + titleContents.title[i].substring(1).toLowerCase(),
-                    subTitleContents.subTitle[i],
-                    endPage.pageEnd[i],
-                    startPage.pageStart[i]));
+        modelList = new ArrayList<>();
+        for (int j = 0; j < titleContents.title.length; j++) {
+            modelList.add(new Model(titleContents.title[j].substring(0, 1).toUpperCase() + "" +
+                    titleContents.title[j].substring(1).toLowerCase(),
+                    subTitleContents.subTitle[j],
+                    startPage.pageStart[j],
+                    endPage.pageEnd[j]));
         }
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
     void MenuOptions(MenuItem item) {
+        if (item.getItemId() == R.id.action_privacy) {
+            startActivity(new Intent(this, PrivacyActivity.class));
+        }
         if (item.getItemId() == R.id.action_about_us) {
             if (mInterstitialAd != null) {
                 mInterstitialAd.show(MainActivity.this);
@@ -192,21 +223,63 @@ public class MainActivity extends AppCompatActivity implements Adapter.onBookCli
         if (item.getItemId() == R.id.action_exit) {
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
             builder.setTitle("Exit")
-                    .setMessage("Do you want to close?")
+                    .setMessage("Do you want to exit?")
                     .setPositiveButton("Yes", (dialog, which) -> {
                         System.exit(0);
                         finish();
                     })
-                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                    .setNegativeButton("No", (dialog, which) -> dialog.dismiss())
                     .setBackground(getResources().getDrawable(R.drawable.nav_header_bg, null))
                     .show();
         }
     }
 
+    private void setAds() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+
+        InterstitialAd.load(this, getString(R.string.test_interstitial_ads_unit_id), adRequest,
+                new InterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                        mInterstitialAd = interstitialAd;
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        mInterstitialAd = null;
+                    }
+                });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
+            builder.setTitle("Close")
+                    .setMessage("Do you want to close?")
+                    .setBackground(AppCompatResources.getDrawable(this, R.drawable.nav_header_bg))
+                    .setPositiveButton("Close", (dialog, which) -> {
+                        System.exit(0);
+                        finish();
+                    })
+                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                    .show();
+        }
+    }
+
+    @Override
+    public void appClicked(MoreAppsModel model) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(model.getUrl()));
+        startActivity(intent);
+    }
+
     @Override
     public void clickedBook(Model model) {
         int rand = (int) (Math.random() * 100);
-        if (rand % 2 != 0) {
+        if (rand % 8 == 0) {
             if (mInterstitialAd != null) {
                 mInterstitialAd.show(MainActivity.this);
                 mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
@@ -241,20 +314,30 @@ public class MainActivity extends AppCompatActivity implements Adapter.onBookCli
         }
     }
 
-    private void setAds() {
-        AdRequest adRequest = new AdRequest.Builder().build();
+    private AdSize getAdSize() {
+        //Determine the screen width to use for the ad width.
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        display.getMetrics(outMetrics);
 
-        InterstitialAd.load(this, getString(R.string.test_interstitial_ads_unit_id), adRequest,
-                new InterstitialAdLoadCallback() {
-                    @Override
-                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                        mInterstitialAd = interstitialAd;
-                    }
+        float widthPixels = outMetrics.widthPixels;
+        float density = outMetrics.density;
 
-                    @Override
-                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        mInterstitialAd = null;
-                    }
-                });
+        //you can also pass your selected width here in dp
+        int adWidth = (int) (widthPixels / density);
+
+        //return the optimal size depends on your orientation (landscape or portrait)
+        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this, adWidth);
+    }
+    private void loadBanner() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+
+        AdSize adSize = getAdSize();
+        // Set the adaptive ad size to the ad view.
+        adView.setAdSize(adSize);
+
+        // Start loading the ad in the background.
+        adView.loadAd(adRequest);
     }
 }

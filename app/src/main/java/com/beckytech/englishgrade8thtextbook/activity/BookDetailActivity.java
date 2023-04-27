@@ -2,17 +2,19 @@ package com.beckytech.englishgrade8thtextbook.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.Display;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.beckytech.englishgrade8thtextbook.R;
-import com.beckytech.englishgrade8thtextbook.contents.ContentEndPage;
-import com.beckytech.englishgrade8thtextbook.contents.ContentStartPage;
 import com.beckytech.englishgrade8thtextbook.model.Model;
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 
@@ -21,8 +23,7 @@ import java.util.List;
 
 public class BookDetailActivity extends AppCompatActivity {
 
-    private final ContentStartPage startPage = new ContentStartPage();
-    private final ContentEndPage endPage = new ContentEndPage();
+    private AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +33,16 @@ public class BookDetailActivity extends AppCompatActivity {
         MobileAds.initialize(this, initializationStatus -> {
         });
 
-        AdView mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
+        //get the reference to your FrameLayout
+        FrameLayout adContainerView = findViewById(R.id.adView_container);
+        //Create an AdView and put it into your FrameLayout
+        adView = new AdView(this);
+        adContainerView.addView(adView);
+        adView.setAdUnitId(getString(R.string.banner_detail_unit_id));
+//        adView.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
+
+        //start requesting banner ads
+        loadBanner();
 
         findViewById(R.id.back_book_detail).setOnClickListener(v -> onBackPressed());
 
@@ -75,5 +83,31 @@ public class BookDetailActivity extends AppCompatActivity {
                 .fitEachPage(true)
                 .scrollHandle(new DefaultScrollHandle(this))
                 .load();
+    }
+    private AdSize getAdSize() {
+        //Determine the screen width to use for the ad width.
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        display.getMetrics(outMetrics);
+
+        float widthPixels = outMetrics.widthPixels;
+        float density = outMetrics.density;
+
+        //you can also pass your selected width here in dp
+        int adWidth = (int) (widthPixels / density);
+
+        //return the optimal size depends on your orientation (landscape or portrait)
+        return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this, adWidth);
+    }
+    private void loadBanner() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+
+        AdSize adSize = getAdSize();
+        // Set the adaptive ad size to the ad view.
+        adView.setAdSize(adSize);
+
+        // Start loading the ad in the background.
+        adView.loadAd(adRequest);
     }
 }

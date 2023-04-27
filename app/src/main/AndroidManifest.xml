@@ -14,9 +14,13 @@
         android:theme="@style/AppTheme"
         tools:targetApi="31">
         <activity
-            android:name=".activity.BookDetailActivity"
+            android:name=".activity.PrivacyActivity"
             android:hardwareAccelerated="true"
             android:exported="false" />
+        <activity
+            android:name=".activity.BookDetailActivity"
+            android:exported="false"
+            android:hardwareAccelerated="true" />
         <activity
             android:name=".activity.AboutActivity"
             android:exported="false"
@@ -29,17 +33,19 @@
         <activity
             android:name=".activity.SplashActivity"
             android:exported="true"
-            android:theme="@style/SplashTheme"
-            android:hardwareAccelerated="true">
+            android:hardwareAccelerated="true"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713 -->
+        </activity>
+        <!-- Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713 -->
+<!--        android:value="ca-app-pub-8504401574247581~7132358980"-->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-8504401574247581~7132358980" />
+            android:value="ca-app-pub-8504401574247581~7132358980"/>
     </application>
 
 </manifest>

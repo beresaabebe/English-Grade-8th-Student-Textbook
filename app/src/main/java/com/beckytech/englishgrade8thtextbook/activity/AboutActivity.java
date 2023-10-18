@@ -40,21 +40,13 @@ public class AboutActivity extends AppCompatActivity implements AboutAdapter.OnL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
-        MobileAds.initialize(this, initializationStatus -> {
-        });
-
-        //get the reference to your FrameLayout
-        FrameLayout adContainerView = findViewById(R.id.adView_container);
-        //Create an AdView and put it into your FrameLayout
-        adView = new AdView(this);
-        adContainerView.addView(adView);
-        adView.setAdUnitId(getString(R.string.banner_about_unit_id));
-//        adView.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
-
-        //start requesting banner ads
+        adsContent();
         loadBanner();
+        bodyContent();
+    }
 
-        findViewById(R.id.ib_back).setOnClickListener(v -> onBackPressed());
+    private void bodyContent() {
+        findViewById(R.id.ib_back).setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
         String str = "About us";
         TextView title = findViewById(R.id.tv_title);
         title.setText(str);
@@ -69,6 +61,18 @@ public class AboutActivity extends AppCompatActivity implements AboutAdapter.OnL
         getData();
         AboutAdapter adapter = new AboutAdapter(modelList, this);
         recyclerView.setAdapter(adapter);
+    }
+
+    private void adsContent() {
+        MobileAds.initialize(this, initializationStatus -> {
+        });
+
+        //get the reference to your FrameLayout
+        FrameLayout adContainerView = findViewById(R.id.adView_container);
+        //Create an AdView and put it into your FrameLayout
+        adView = new AdView(this);
+        adContainerView.addView(adView);
+        adView.setAdUnitId(getString(R.string.banner_about_unit_id));
     }
 
     private void getData() {

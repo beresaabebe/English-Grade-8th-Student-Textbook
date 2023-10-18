@@ -1,11 +1,11 @@
 package com.beckytech.englishgrade8thtextbook;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -16,16 +16,20 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.beckytech.englishgrade8thtextbook.activity.*;
-import com.beckytech.englishgrade8thtextbook.adapter.*;
-import com.beckytech.englishgrade8thtextbook.contents.*;
-import com.beckytech.englishgrade8thtextbook.model.*;
+import com.beckytech.englishgrade8thtextbook.activity.AboutActivity;
+import com.beckytech.englishgrade8thtextbook.activity.BookDetailActivity;
+import com.beckytech.englishgrade8thtextbook.activity.PrivacyActivity;
+import com.beckytech.englishgrade8thtextbook.adapter.Adapter;
+import com.beckytech.englishgrade8thtextbook.contents.ContentEndPage;
+import com.beckytech.englishgrade8thtextbook.contents.ContentStartPage;
+import com.beckytech.englishgrade8thtextbook.contents.SubTitleContents;
+import com.beckytech.englishgrade8thtextbook.contents.TitleContents;
+import com.beckytech.englishgrade8thtextbook.model.Model;
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -41,20 +45,16 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements MoreAppsAdapter.MoreAppsClicked, Adapter.onBookClicked {
+public class MainActivity extends AppCompatActivity implements Adapter.onBookClicked {
     private InterstitialAd mInterstitialAd;
-    private DrawerLayout drawerLayout;
     private List<Model> modelList;
     private final TitleContents titleContents = new TitleContents();
     private final SubTitleContents subTitleContents = new SubTitleContents();
     private final ContentStartPage startPage = new ContentStartPage();
     private final ContentEndPage endPage = new ContentEndPage();
 
-    private final MoreAppImages images = new MoreAppImages();
-    private final MoreAppUrl url = new MoreAppUrl();
-    private final MoreAppsName appsName = new MoreAppsName();
-    private List<MoreAppsModel> moreAppsModelList;
     private AdView adView;
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,23 +62,32 @@ public class MainActivity extends AppCompatActivity implements MoreAppsAdapter.M
         setContentView(R.layout.activity_main_drawer);
 
         AppRate.app_launched(this);
-
         MobileAds.initialize(this, initializationStatus -> {
         });
-
         setAds();
-
-        //get the reference to your FrameLayout
-        FrameLayout adContainerView = findViewById(R.id.adView_container);
-        //Create an AdView and put it into your FrameLayout
-        adView = new AdView(this);
-        adContainerView.addView(adView);
-        adView.setAdUnitId(getString(R.string.banner_ad_unit_id));
-//        adView.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
-
-        //start requesting banner ads
+        adsContent();
         loadBanner();
+        toolbarDrawer();
+        navigationView();
+        mainRecyclerView();
+    }
 
+    private void mainRecyclerView() {
+        RecyclerView recyclerView = findViewById(R.id.recyclerView_main_item);
+        getData();
+        Adapter adapter = new Adapter(modelList, this);
+        recyclerView.setAdapter(adapter);
+    }
+
+    private void navigationView() {
+        NavigationView navigationView = findViewById(R.id.navigationView);
+        navigationView.setNavigationItemSelectedListener(item -> {
+            MenuOptions(item);
+            return true;
+        });
+    }
+
+    private void toolbarDrawer() {
         drawerLayout = findViewById(R.id.drawer_layout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -87,28 +96,15 @@ public class MainActivity extends AppCompatActivity implements MoreAppsAdapter.M
         toggle.syncState();
         drawerLayout.addDrawerListener(toggle);
 
-        NavigationView navigationView = findViewById(R.id.navigationView);
-        navigationView.setNavigationItemSelectedListener(item -> {
-            MenuOptions(item);
-            return true;
-        });
-
-        RecyclerView recyclerView = findViewById(R.id.recyclerView_main_item);
-        getData();
-        Adapter adapter = new Adapter(modelList, this);
-        recyclerView.setAdapter(adapter);
-
-        RecyclerView moreAppsRecyclerView = findViewById(R.id.moreAppsRecycler);
-        getMoreApps();
-        MoreAppsAdapter moreAppsAdapter = new MoreAppsAdapter(moreAppsModelList, this);
-        moreAppsRecyclerView.setAdapter(moreAppsAdapter);
     }
 
-    private void getMoreApps() {
-        moreAppsModelList = new ArrayList<>();
-        for (int i = 0; i < appsName.appNames.length; i++) {
-            moreAppsModelList.add(new MoreAppsModel(appsName.appNames[i], url.url[i], images.images[i]));
-        }
+    private void adsContent() {
+        //get the reference to your FrameLayout
+        FrameLayout adContainerView = findViewById(R.id.adView_container);
+        //Create an AdView and put it into your FrameLayout
+        adView = new AdView(this);
+        adContainerView.addView(adView);
+        adView.setAdUnitId(getString(R.string.banner_ad_unit_id));
     }
 
     private void getData() {
@@ -124,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements MoreAppsAdapter.M
 
     @SuppressLint("UseCompatLoadingForDrawables")
     void MenuOptions(MenuItem item) {
+        drawerLayout.closeDrawer(GravityCompat.START);
         if (item.getItemId() == R.id.action_privacy) {
             startActivity(new Intent(this, PrivacyActivity.class));
         }
@@ -210,8 +207,8 @@ public class MainActivity extends AppCompatActivity implements MoreAppsAdapter.M
         }
 
         if (item.getItemId() == R.id.action_update) {
-            SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-            int lastVersion = pref.getInt("lastVersion", 0);
+            SharedPreferences pref = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
+            int lastVersion = pref.getInt("lastVersion", 4);
             String url = "https://play.google.com/store/apps/details?id=" + getPackageName();
             if (lastVersion < BuildConfig.VERSION_CODE) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
@@ -249,31 +246,6 @@ public class MainActivity extends AppCompatActivity implements MoreAppsAdapter.M
                         mInterstitialAd = null;
                     }
                 });
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-            builder.setTitle("Close")
-                    .setMessage("Do you want to close?")
-                    .setBackground(AppCompatResources.getDrawable(this, R.drawable.nav_header_bg))
-                    .setPositiveButton("Close", (dialog, which) -> {
-                        System.exit(0);
-                        finish();
-                    })
-                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                    .show();
-        }
-    }
-
-    @Override
-    public void appClicked(MoreAppsModel model) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(model.getUrl()));
-        startActivity(intent);
     }
 
     @Override

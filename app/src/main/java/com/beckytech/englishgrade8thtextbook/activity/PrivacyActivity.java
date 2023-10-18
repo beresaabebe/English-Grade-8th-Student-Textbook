@@ -1,7 +1,5 @@
 package com.beckytech.englishgrade8thtextbook.activity;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
@@ -9,7 +7,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.beckytech.englishgrade8thtextbook.R;
 
@@ -22,7 +21,7 @@ public class PrivacyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_privacy);
 
         ImageButton ib_back = findViewById(R.id.ib_back);
-        ib_back.setOnClickListener(view -> onBackPressed());
+        ib_back.setOnClickListener(view -> getOnBackPressedDispatcher().onBackPressed());
 
         TextView tv_title = findViewById(R.id.tv_title);
         tv_title.setText(R.string.privacy_title);

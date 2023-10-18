@@ -63,12 +63,6 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/icon" />
 
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_margin="5dp"
-                android:background="#D6D5D5" />
-
             <WebView
                 android:id="@+id/webView"
                 android:layout_width="match_parent"
@@ -76,12 +70,6 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
                 android:padding="10dp" />
-
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_margin="5dp"
-                android:background="#D6D5D5" />
 
             <TextView
                 style="@style/TextAppearance.MaterialComponents.Headline3"
@@ -137,8 +125,7 @@
                 android:id="@+id/adView_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_alignParentBottom="true"
+                android:layout_gravity="center_horizontal"
                 android:background="@color/white">
             </FrameLayout>
 

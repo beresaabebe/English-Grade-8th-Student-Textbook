@@ -1,10 +1,12 @@
 package com.beckytech.englishgrade8thtextbook.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,39 +26,20 @@ import java.util.List;
 public class BookDetailActivity extends AppCompatActivity {
 
     private AdView adView;
+    private Model model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_detail);
 
-        MobileAds.initialize(this, initializationStatus -> {
-        });
-
-        //get the reference to your FrameLayout
-        FrameLayout adContainerView = findViewById(R.id.adView_container);
-        //Create an AdView and put it into your FrameLayout
-        adView = new AdView(this);
-        adContainerView.addView(adView);
-        adView.setAdUnitId(getString(R.string.banner_detail_unit_id));
-//        adView.setAdUnitId("ca-app-pub-3940256099942544/6300978111");
-
-        //start requesting banner ads
+        adsContent();
         loadBanner();
+        headerContent();
+        mainBodyContent();
+    }
 
-        findViewById(R.id.back_book_detail).setOnClickListener(v -> onBackPressed());
-
-        Intent intent = getIntent();
-        Model model = (Model) intent.getSerializableExtra("data");
-
-        TextView title = findViewById(R.id.title_book_detail);
-        title.setSelected(true);
-        title.setText(model.getTitle());
-
-        TextView subTitle = findViewById(R.id.sub_title_book_detail);
-        subTitle.setSelected(true);
-        subTitle.setText(model.getSubTitle());
-
+    private void mainBodyContent() {
         PDFView pdfView = findViewById(R.id.pdfView);
 
         int start = model.getStartPage();
@@ -84,6 +67,36 @@ public class BookDetailActivity extends AppCompatActivity {
                 .scrollHandle(new DefaultScrollHandle(this))
                 .load();
     }
+
+    private void headerContent() {
+        ImageButton back_btn = findViewById(R.id.back_book_detail);
+        back_btn.setColorFilter(Color.WHITE);
+        back_btn.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
+
+        Intent intent = getIntent();
+        model = (Model) intent.getSerializableExtra("data");
+
+        TextView title = findViewById(R.id.title_book_detail);
+        title.setSelected(true);
+        title.setText(model.getTitle());
+
+        TextView subTitle = findViewById(R.id.sub_title_book_detail);
+        subTitle.setSelected(true);
+        subTitle.setText(model.getSubTitle());
+    }
+
+    private void adsContent() {
+        MobileAds.initialize(this, initializationStatus -> {
+        });
+
+        //get the reference to your FrameLayout
+        FrameLayout adContainerView = findViewById(R.id.adView_container);
+        //Create an AdView and put it into your FrameLayout
+        adView = new AdView(this);
+        adContainerView.addView(adView);
+        adView.setAdUnitId(getString(R.string.banner_detail_unit_id));
+    }
+
     private AdSize getAdSize() {
         //Determine the screen width to use for the ad width.
         Display display = getWindowManager().getDefaultDisplay();

@@ -54,7 +54,7 @@ public class AppRate {
 
         LinearLayout ll = new LinearLayout(mContext);
         ll.setOrientation(LinearLayout.VERTICAL);
-        ll.setPadding(20,20,20,20);
+        ll.setPadding(20, 20, 20, 20);
 
         TextView tv = new TextView(mContext);
         tv.setText(String.format("If you enjoy using %s, please take a moment to rate it.\nThanks for your support!", APP_TITLE));

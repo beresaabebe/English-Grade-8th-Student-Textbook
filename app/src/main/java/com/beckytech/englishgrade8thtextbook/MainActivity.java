@@ -48,11 +48,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements Adapter.onBookClicked {
     private InterstitialAd mInterstitialAd;
     private List<Model> modelList;
-    private final TitleContents titleContents = new TitleContents();
-    private final SubTitleContents subTitleContents = new SubTitleContents();
-    private final ContentStartPage startPage = new ContentStartPage();
-    private final ContentEndPage endPage = new ContentEndPage();
-
     private AdView adView;
     private DrawerLayout drawerLayout;
 
@@ -109,12 +104,12 @@ public class MainActivity extends AppCompatActivity implements Adapter.onBookCli
 
     private void getData() {
         modelList = new ArrayList<>();
-        for (int j = 0; j < titleContents.title.length; j++) {
-            modelList.add(new Model(titleContents.title[j].substring(0, 1).toUpperCase() + "" +
-                    titleContents.title[j].substring(1).toLowerCase(),
-                    subTitleContents.subTitle[j],
-                    startPage.pageStart[j],
-                    endPage.pageEnd[j]));
+        for (int j = 0; j < TitleContents.title.length; j++) {
+            modelList.add(new Model(TitleContents.title[j].substring(0, 1).toUpperCase() +
+                    TitleContents.title[j].substring(1).toLowerCase(),
+                    SubTitleContents.subTitle[j],
+                    ContentStartPage.pageStart[j],
+                    ContentEndPage.pageEnd[j]));
         }
     }
 
@@ -208,7 +203,7 @@ public class MainActivity extends AppCompatActivity implements Adapter.onBookCli
 
         if (item.getItemId() == R.id.action_update) {
             SharedPreferences pref = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
-            int lastVersion = pref.getInt("lastVersion", 4);
+            int lastVersion = pref.getInt("lastVersion", 5);
             String url = "https://play.google.com/store/apps/details?id=" + getPackageName();
             if (lastVersion < BuildConfig.VERSION_CODE) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
@@ -219,8 +214,7 @@ public class MainActivity extends AppCompatActivity implements Adapter.onBookCli
         }
         if (item.getItemId() == R.id.action_exit) {
             MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this);
-            builder.setTitle("Exit")
-                    .setMessage("Do you want to exit?")
+            builder.setMessage("Do you want to exit?")
                     .setPositiveButton("Yes", (dialog, which) -> {
                         System.exit(0);
                         finish();
@@ -301,6 +295,7 @@ public class MainActivity extends AppCompatActivity implements Adapter.onBookCli
         //return the optimal size depends on your orientation (landscape or portrait)
         return AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this, adWidth);
     }
+
     private void loadBanner() {
         AdRequest adRequest = new AdRequest.Builder()
                 .build();

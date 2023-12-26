@@ -29,10 +29,10 @@ import java.util.List;
 import java.util.Locale;
 
 public class AboutActivity extends AppCompatActivity implements AboutAdapter.OnLinkClicked {
-    private List<AboutModel> modelList;
     private final AboutImages images = new AboutImages();
     private final AboutName name = new AboutName();
     private final AboutUrlContents urlContents = new AboutUrlContents();
+    private List<AboutModel> modelList;
     private AdView adView;
 
     @Override
@@ -105,6 +105,7 @@ public class AboutActivity extends AppCompatActivity implements AboutAdapter.OnL
         //return the optimal size depends on your orientation (landscape or portrait)
         return com.google.android.gms.ads.AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(this, adWidth);
     }
+
     private void loadBanner() {
         AdRequest adRequest = new AdRequest.Builder()
                 .build();

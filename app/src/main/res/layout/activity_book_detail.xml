@@ -65,7 +65,35 @@
         android:id="@+id/pdfView"
         android:layout_below="@id/toolbar_Rl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:background="@android:color/transparent"
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/prevButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/previous_btn_bg"
+            android:contentDescription="@string/previous"
+            android:src="@drawable/baseline_arrow_upward_24" />
+
+        <ImageButton
+            android:id="@+id/nextButton"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/next_btn_bg"
+            android:contentDescription="@string/next"
+            android:src="@drawable/baseline_arrow_downward_24" />
+
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/adView_container"
@@ -73,7 +101,6 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:background="@color/white">
-    </FrameLayout>
+        android:background="@color/white"></FrameLayout>
 
 </RelativeLayout>

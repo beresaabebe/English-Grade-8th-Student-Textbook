@@ -21,4 +21,6 @@
     <string name="privacy">Privacy</string>
     <string name="privacy_title">Privacy Protection Disclosure</string>
     <string name="banner_detail_unit_id">ca-app-pub-8504401574247581/4167943086</string>
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>
 </resources>

@@ -1,7 +1,7 @@
 package com.beckytech.englishgrade8thtextbook.contents;
 
 public class SubTitleContents {
-    public String[] subTitle = {
+    public static String[] subTitle = {
             "Unit 1",
             "Unit 2",
             "Unit 3",

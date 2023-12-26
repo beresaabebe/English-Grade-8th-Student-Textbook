@@ -1,7 +1,7 @@
 package com.beckytech.englishgrade8thtextbook.contents;
 
 public class ContentStartPage {
-    public int[] pageStart = {
+    public static int[] pageStart = {
             0,
             15,
             27,

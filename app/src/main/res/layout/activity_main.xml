@@ -16,10 +16,8 @@
             android:id="@+id/recyclerView_main_item"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginStart="5dp"
-            android:orientation="vertical"
-            android:layout_marginEnd="5dp"
             android:nestedScrollingEnabled="true"
+            android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/list_item" />
 
@@ -27,8 +25,7 @@
             android:id="@+id/adView_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/white">
-        </FrameLayout>
+            android:background="@color/white" />
 
     </LinearLayout>
 

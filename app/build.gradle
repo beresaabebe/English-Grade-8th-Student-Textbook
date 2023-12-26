@@ -10,8 +10,8 @@ android {
         applicationId "com.beckytech.englishgrade8thtextbook"
         minSdk 21
         targetSdk 34
-        versionCode 4
-        versionName "1.3"
+        versionCode 5
+        versionName "1.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -28,14 +28,17 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     namespace 'com.beckytech.englishgrade8thtextbook'
+    buildFeatures {
+        buildConfig true
+    }
 }
 
 dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.android.gms:play-services-ads:22.4.0'
+    implementation 'com.google.android.gms:play-services-ads:22.6.0'
     implementation 'com.google.ads.mediation:facebook:6.16.0.0'
     implementation 'com.facebook.infer.annotation:infer-annotation:0.18.0'
     testImplementation 'junit:junit:4.13.2'
@@ -43,9 +46,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
-    implementation "androidx.lifecycle:lifecycle-runtime:2.5.1"
+    implementation "androidx.lifecycle:lifecycle-runtime:2.6.2"
     //noinspection LifecycleAnnotationProcessorWithJava8
-    annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.5.1"
+    annotationProcessor "androidx.lifecycle:lifecycle-compiler:2.6.2"
     implementation 'com.github.barteksc:android-pdf-viewer:3.2.0-beta.1'
     implementation platform('com.google.firebase:firebase-bom:31.0.1')
     implementation 'com.google.firebase:firebase-analytics'

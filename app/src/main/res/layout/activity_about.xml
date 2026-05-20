@@ -58,6 +58,7 @@
             <ImageView
                 android:layout_width="150dp"
                 android:layout_height="150dp"
+                android:layout_margin="10dp"
                 android:layout_gravity="center_horizontal"
                 android:contentDescription="@string/app_name"
                 android:scaleType="centerCrop"

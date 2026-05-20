@@ -3,17 +3,18 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
-        //noinspection JcenterRepositoryObsolete
-        jcenter()
+        maven { url "https://repository.liferay.com/nexus/content/repositories/public/" }
     }
+}
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.10.0'
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
-        //noinspection JcenterRepositoryObsolete
-        jcenter()
+        maven { url "https://repository.liferay.com/nexus/content/repositories/public/" }
     }
 }
 rootProject.name = "English Grade 8th Textbook"

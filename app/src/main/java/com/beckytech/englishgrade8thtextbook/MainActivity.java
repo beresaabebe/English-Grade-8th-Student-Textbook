@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -17,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,6 +46,7 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements Adapter.onBookClicked {
     private InterstitialAd mInterstitialAd;
@@ -57,8 +60,7 @@ public class MainActivity extends AppCompatActivity implements Adapter.onBookCli
         setContentView(R.layout.activity_main_drawer);
 
         AppRate.app_launched(this);
-        MobileAds.initialize(this, initializationStatus -> {
-        });
+        MobileAds.initialize(this, initializationStatus -> {});
         setAds();
         adsContent();
         loadBanner();
@@ -85,14 +87,16 @@ public class MainActivity extends AppCompatActivity implements Adapter.onBookCli
     private void toolbarDrawer() {
         drawerLayout = findViewById(R.id.drawer_layout);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitleTextColor(getColor(R.color.white));
+
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
                 R.string.app_name, R.string.app_name);
         toggle.syncState();
+        toggle.getDrawerArrowDrawable().setColorFilter(ContextCompat.getColor(this, R.color.white),PorterDuff.Mode.SRC_IN);
         drawerLayout.addDrawerListener(toggle);
 
     }
-
     private void adsContent() {
         //get the reference to your FrameLayout
         FrameLayout adContainerView = findViewById(R.id.adView_container);
@@ -101,7 +105,6 @@ public class MainActivity extends AppCompatActivity implements Adapter.onBookCli
         adContainerView.addView(adView);
         adView.setAdUnitId(getString(R.string.banner_ad_unit_id));
     }
-
     private void getData() {
         modelList = new ArrayList<>();
         for (int j = 0; j < TitleContents.title.length; j++) {

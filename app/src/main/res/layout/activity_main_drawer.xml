@@ -41,8 +41,8 @@
         android:background="@color/bg"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_layout"
-        app:itemIconTint="@color/icon"
-        app:itemTextColor="@color/text"
+        app:itemIconTint="#207700"
+        app:itemTextColor="#247C00"
         app:menu="@menu/main_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

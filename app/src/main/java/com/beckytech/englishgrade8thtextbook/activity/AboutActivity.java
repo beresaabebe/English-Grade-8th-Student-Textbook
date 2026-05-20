@@ -72,7 +72,7 @@ public class AboutActivity extends AppCompatActivity implements AboutAdapter.OnL
         //Create an AdView and put it into your FrameLayout
         adView = new AdView(this);
         adContainerView.addView(adView);
-        adView.setAdUnitId(getString(R.string.banner_about_unit_id));
+        adView.setAdUnitId(getString(R.string.google_banner_about_unit_id));
     }
 
     private void getData() {

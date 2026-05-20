@@ -27,7 +27,7 @@ public class PrivacyActivity extends AppCompatActivity {
         tv_title.setText(R.string.privacy_title);
 
         WebView activity_privacy = findViewById(R.id.webView_privacy);
-        activity_privacy.loadUrl("https://yoosaad.com/beresa-android-website-privacy-policy/");
+        activity_privacy.loadUrl("https://yoosaad.com/privacy/");
         activity_privacy.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         activity_privacy.getSettings().getLoadsImagesAutomatically();
         activity_privacy.getSettings().setJavaScriptEnabled(true);

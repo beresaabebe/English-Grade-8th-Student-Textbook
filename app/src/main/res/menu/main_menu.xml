@@ -33,6 +33,11 @@
         android:title="@string/rate"/>
 
     <item
+        android:id="@+id/action_ad_toggle"
+        android:icon="@drawable/ic_baseline_close_24"
+        android:title="Turn off Ads (5 min)" />
+
+    <item
         android:id="@+id/action_exit"
         android:icon="@drawable/ic_baseline_close_24"
         android:title="@string/exit"/>

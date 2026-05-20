@@ -62,11 +62,12 @@
 
     </RelativeLayout>
 
-    <com.github.barteksc.pdfviewer.PDFView
-        android:id="@+id/pdfView"
-        android:layout_below="@id/toolbar_Rl"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager_chapters"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar_Rl"
+        android:layout_above="@id/adView_container" />
 
     <LinearLayout
         android:layout_width="wrap_content"

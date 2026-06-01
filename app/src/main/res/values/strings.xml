@@ -19,10 +19,12 @@
     <string name="google_banner_detail_unit_id">ca-app-pub-8504401574247581/4167943086</string>
     <string name="google_app_open_ads_unit_id">ca-app-pub-8504401574247581/5016535376</string>
     <string name="google_native_ads_unit_id">ca-app-pub-8504401574247581/7157875256</string>
+    <string name="google_rewarded_ads_unit_id">ca-app-pub-8504401574247581/4350125343</string>
     
     <string name="facebook_interstitial_ads_unit_id">194218016806767_194224713472764</string>
     <string name="facebook_banner_ads_unit_id">194218016806767_194223746806194</string>
     <string name="facebook_native_ads_unit_id">194218016806767_969426355952592</string>
+    <string name="facebook_rewarded_ads_unit_id">194218016806767_979669314928296</string>
 
     <string name="contact_us">Contact us</string>
     <string name="download_more_apps">Download more apps</string>

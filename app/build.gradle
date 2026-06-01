@@ -10,8 +10,8 @@ android {
         applicationId "com.beckytech.englishgrade8thtextbook"
         minSdk 24
         targetSdk 36
-        versionCode 8
-        versionName "1.6.0"
+        versionCode 9
+        versionName "1.6.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -72,4 +72,8 @@ dependencies {
 
     // Zoomable Image View
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+
+    // Play Core for In-App Updates and Reviews
+    implementation 'com.google.android.play:app-update:2.1.0'
+    implementation 'com.google.android.play:review:2.0.2'
 }

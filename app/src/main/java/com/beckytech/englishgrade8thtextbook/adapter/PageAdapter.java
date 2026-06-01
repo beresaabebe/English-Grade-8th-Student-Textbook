@@ -123,8 +123,11 @@ public class PageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             adView.setCallToActionView(adView.findViewById(R.id.ad_call_to_action));
             adView.setIconView(adView.findViewById(R.id.ad_app_icon));
             adView.setMediaView(adView.findViewById(R.id.ad_media));
+            adView.setPriceView(adView.findViewById(R.id.ad_price));
+            adView.setStoreView(adView.findViewById(R.id.ad_store));
 
             ((TextView) Objects.requireNonNull(adView.getHeadlineView())).setText(nativeAd.getHeadline());
+
             if (nativeAd.getBody() == null) {
                 Objects.requireNonNull(adView.getBodyView()).setVisibility(View.INVISIBLE);
             } else {
@@ -144,6 +147,20 @@ public class PageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             } else {
                 ((ImageView) Objects.requireNonNull(adView.getIconView())).setImageDrawable(nativeAd.getIcon().getDrawable());
                 adView.getIconView().setVisibility(View.VISIBLE);
+            }
+
+            if (nativeAd.getPrice() == null) {
+                Objects.requireNonNull(adView.getPriceView()).setVisibility(View.INVISIBLE);
+            } else {
+                Objects.requireNonNull(adView.getPriceView()).setVisibility(View.VISIBLE);
+                ((TextView) adView.getPriceView()).setText(nativeAd.getPrice());
+            }
+
+            if (nativeAd.getStore() == null) {
+                Objects.requireNonNull(adView.getStoreView()).setVisibility(View.INVISIBLE);
+            } else {
+                Objects.requireNonNull(adView.getStoreView()).setVisibility(View.VISIBLE);
+                ((TextView) adView.getStoreView()).setText(nativeAd.getStore());
             }
 
             adView.setNativeAd(nativeAd);

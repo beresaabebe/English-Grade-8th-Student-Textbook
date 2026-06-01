@@ -36,7 +36,9 @@ public class MyApplication extends Application implements Application.ActivityLi
 
     @Override
     public void onStart(@NonNull LifecycleOwner owner) {
-        appOpenAdManager.showAdIfAvailable(currentActivity);
+        if (AdManager.getInstance(this).isAdsEnabled()) {
+            appOpenAdManager.showAdIfAvailable(currentActivity);
+        }
     }
 
     @Override

@@ -8,6 +8,7 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.beckytech.englishgrade8thtextbook.AdManager;
 import com.beckytech.englishgrade8thtextbook.MainActivity;
 import com.beckytech.englishgrade8thtextbook.R;
 
@@ -20,6 +21,10 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        AdManager.getInstance(this).loadInterstitialAd(this);
+        AdManager.getInstance(this).loadRewardedAd(this);
+
         new Handler().postDelayed(() -> {
             startActivity(new Intent(SplashActivity.this, MainActivity.class));
             finish();

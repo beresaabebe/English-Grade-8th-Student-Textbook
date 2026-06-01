@@ -1,18 +1,19 @@
 package com.beckytech.englishgrade8thtextbook;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -35,6 +36,12 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.play.core.appupdate.AppUpdateInfo;
+import com.google.android.play.core.appupdate.AppUpdateManager;
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
+import com.google.android.play.core.install.model.AppUpdateType;
+import com.google.android.play.core.install.model.UpdateAvailability;
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,25 +51,93 @@ public class MainActivity extends AppCompatActivity implements Adapter.onBookCli
     private AdView adView;
     private DrawerLayout drawerLayout;
 
+    private final List<com.google.android.gms.ads.nativead.NativeAd> mainNativeAds = new ArrayList<>();
+
+    private static final int UPDATE_CODE = 100;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_drawer);
 
+        checkUpdate(false);
         AppRate.app_launched(this);
         AdManager.getInstance(this).loadInterstitialAd(this);
+        AdManager.getInstance(this).loadRewardedAd(this);
         adsContent();
         loadBanner();
         toolbarDrawer();
         navigationView();
-        mainRecyclerView();
+        loadNativeAds();
     }
 
     private void mainRecyclerView() {
         RecyclerView recyclerView = findViewById(R.id.recyclerView_main_item);
         getData();
-        Adapter adapter = new Adapter(modelList, this);
+        Adapter adapter = new Adapter(modelList, mainNativeAds, this);
         recyclerView.setAdapter(adapter);
+    }
+
+    private void checkUpdate(boolean manual) {
+        AppUpdateManager appUpdateManager = AppUpdateManagerFactory.create(this);
+        Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
+        appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                    && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
+                try {
+                    appUpdateManager.startUpdateFlowForResult(
+                            appUpdateInfo,
+                            AppUpdateType.IMMEDIATE,
+                            this,
+                            UPDATE_CODE);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                if (manual) {
+                    Toast.makeText(this, "No update available!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == UPDATE_CODE) {
+            if (resultCode != RESULT_OK) {
+                // If the update is cancelled or fails, you can request to start the update again.
+                Log.e("Error", "Update flow failed! Result code: " + resultCode);
+            }
+        }
+    }
+
+    private void loadNativeAds() {
+        if (!AdManager.getInstance(this).isAdsEnabled()) {
+            mainRecyclerView();
+            return;
+        }
+
+        com.google.android.gms.ads.AdLoader.Builder builder = new com.google.android.gms.ads.AdLoader.Builder(this, getString(R.string.google_native_ads_unit_id));
+        builder.forNativeAd(nativeAd -> {
+            mainNativeAds.add(nativeAd);
+            mainRecyclerView();
+        });
+        builder.withAdListener(new com.google.android.gms.ads.AdListener() {
+            @Override
+            public void onAdFailedToLoad(@NonNull com.google.android.gms.ads.LoadAdError loadAdError) {
+                mainRecyclerView();
+            }
+        });
+        builder.build().loadAds(new com.google.android.gms.ads.AdRequest.Builder().build(), 3);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        for (com.google.android.gms.ads.nativead.NativeAd ad : mainNativeAds) {
+            ad.destroy();
+        }
     }
 
     private void navigationView() {
@@ -147,9 +222,7 @@ public class MainActivity extends AppCompatActivity implements Adapter.onBookCli
         }
 
         if (id == R.id.action_rate) {
-            String pkg = getPackageName();
-            startActivity(new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("http://play.google.com/store/apps/details?id=" + pkg)));
+            AppRate.showRateDialog(this, null);
             return true;
         }
 
@@ -171,22 +244,18 @@ public class MainActivity extends AppCompatActivity implements Adapter.onBookCli
         }
 
         if (id == R.id.action_update) {
-            SharedPreferences pref = getSharedPreferences(getPackageName(), Context.MODE_PRIVATE);
-            int lastVersion = pref.getInt("lastVersion", 5);
-            String url = "https://play.google.com/store/apps/details?id=" + getPackageName();
-            if (lastVersion < BuildConfig.VERSION_CODE) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-                Toast.makeText(this, "New update is available download it from play store!", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "No update available!", Toast.LENGTH_SHORT).show();
-            }
+            checkUpdate(true);
             return true;
         }
         if (id == R.id.action_ad_toggle) {
             if (AdManager.getInstance(this).isAdsEnabled()) {
-                AdManager.getInstance(this).turnOffAdsForFiveMinutes();
-                Toast.makeText(this, "Ads turned off for 5 minutes!", Toast.LENGTH_LONG).show();
-                if (adView != null) adView.setVisibility(android.view.View.GONE);
+                AdManager.getInstance(this).showRewardedAd(this, () -> {
+                    AdManager.getInstance(this).turnOffAdsForFiveMinutes();
+                    Toast.makeText(this, "Reward Earned: Ads turned off for 5 minutes!", Toast.LENGTH_LONG).show();
+                    if (adView != null) adView.setVisibility(android.view.View.GONE);
+                    NavigationView nv = findViewById(R.id.navigationView);
+                    if (nv != null) updateMenu(nv.getMenu());
+                });
             } else {
                 AdManager.getInstance(this).turnOnAdsManually();
                 Toast.makeText(this, "Ads turned back on!", Toast.LENGTH_SHORT).show();
